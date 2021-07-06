@@ -9,9 +9,6 @@ on:
       aws_region:
         description: 'region in aws'
         required: true
-      s3_storage:
-        description: 'AWS S3 storage bucket name (i.e. ocp-s3-storage)'
-        required: true
 
 jobs:
   force-remove-cluster:
