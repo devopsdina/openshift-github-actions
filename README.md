@@ -199,6 +199,10 @@ If you are using an RHPDS Open Environment Elastic IPs are limited to 5.  You ma
 
 ![elastic IPs exceeded](/assets/images/elastic_IPs_exceeded.png)
 
+##### Invalid AMI
+
+Every few months AWS updates the AMI's, you may get an error if AWS removes an older AMI.   While we do our best to ensure the default AMI's are available, you may hit this issue before we do.  Please open a pull request or issue if you run into this!
+
 ---
 
 ## Maintainers

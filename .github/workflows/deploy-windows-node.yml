@@ -13,9 +13,9 @@ on:
         description: 'OpenShift API endpoint (eg. https://api.ocp-15.sandbox1900.opentlc.com:6443)'
         required: true
       ami:
-        description: 'AWS ami to be used for machineSet. Default: Windows_Server-2019-English-Full-ContainersLatest-2021.04.14'
+        description: 'AWS ami to be used for machineSet. Default: Windows_Server-2019-English-Full-ContainersLatest-2021.06.09'
         required: true
-        default: 'ami-015451c8bbe8e7650'
+        default: 'ami-0a23033ab25d47f2c'
       containerImage:
         description: 'Container Image to pull from registry'
         required: true
