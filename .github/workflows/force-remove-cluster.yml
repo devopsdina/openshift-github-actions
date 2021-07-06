@@ -6,7 +6,7 @@ on:
       clusterName:
         description: 'Short name of cluster INCLUDING unquie id (i.e. ocp-test-01-a4j8a)'
         required: true
-      aws_region:
+      region:
         description: 'region in aws'
         required: true
       ocpVersion:
@@ -49,7 +49,7 @@ jobs:
           mkdir -p ./${{ env.temp_dir }}
           mkdir -p ./${{ env.temp_dir }}/${{ github.event.inputs.clusterName }}
           export ID=${RANDOM:0:10000}
-          export aws_region="${{ github.event.inputs.aws_region }}"
+          export aws_region="${{ github.event.inputs.region }}"
           export clusterName="${{ github.event.inputs.clusterName }}"
           envsubst < ./destroy-configs/metadata.json > ./${{ env.temp_dir }}/${{ github.event.inputs.clusterName }}/metadata.json
 
