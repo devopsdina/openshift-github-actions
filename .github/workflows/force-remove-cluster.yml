@@ -9,6 +9,10 @@ on:
       aws_region:
         description: 'region in aws'
         required: true
+      ocpVersion:
+        description: 'Version of OpenShift Cluster'
+        required: true
+        default: 'stable'
 
 jobs:
   force-remove-cluster:
@@ -26,7 +30,7 @@ jobs:
         run: |
           mkdir -p ./${{ env.lcl_install_dir }}
           echo "Downloading OpenShift Installer..."
-          wget -q https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${{ env.ocpVersion }}/openshift-install-mac.tar.gz
+          wget -q https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${{ github.event.inputs.ocpVersion }}/openshift-install-mac.tar.gz
           tar -xvzf openshift-install-mac.tar.gz
           echo "Update permissions to executable on the openshift-installer..."
           chmod +x ./openshift-install
