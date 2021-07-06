@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       clusterName:
-        description: 'Short name of cluster INCLUDING unquie id (i.e. ocp-test-01-a4j8a)'
+        description: 'Short name of cluster INCLUDING unique id (i.e. ocp-15-pkccj)'
         required: true
       region:
-        description: 'region in aws'
+        description: 'region in AWS'
         required: true
       ocpVersion:
-        description: 'Version of OpenShift Cluster'
+        description: 'OpenShift version installed (stable, 4.7.17)'
         required: true
         default: 'stable'
 
