@@ -62,12 +62,6 @@ jobs:
           echo "instance_type is: t2.micro"
           echo "upload ssh key from openshift instance ${{ github.event.inputs.clusterConfigName }} to create key pair"
           key_exists=$(aws ec2 import-key-pair --key-name ${{ github.event.inputs.clusterConfigName }} --public-key-material fileb://./${{ env.temp_dir }}/ssh-keys/${{ github.event.inputs.clusterConfigName }}.pub 2>&1) || true
-          # if [[ $key_exists = *(InvalidKeyPair.Duplicate)* ]]
-          # then
-          #   echo "${{ github.event.inputs.clusterConfigName }} key pair already exists, moving on..."
-          # else
-          #   echo "${{ github.event.inputs.clusterConfigName }} key pair uploading..."
-          # fi
           echo "deploying Bastion host in AWS"
           aws ec2 run-instances \
             --image-id ${{ github.event.inputs.ami }} \
