@@ -38,10 +38,11 @@ jobs:
           clusterConfigName=$(echo ${{ github.event.inputs.ocpAPI }} | cut -d '.' -f 2-2)
           mkdir -p ./${{ env.temp_dir }}
           echo "Downloading $clusterConfigName metadata files from S3..."
-          aws s3 sync s3://${{ github.event.inputs.s3_storage }}/$clusterConfigName ./${{ env.temp_dir }} --region ${{ github.event.inputs.region }}
+          aws s3 sync s3://${{ github.event.inputs.s3_storage }}/$clusterConfigName/auth ./${{ env.temp_dir }} --region ${{ github.event.inputs.region }}
+          ls ./${{ env.temp_dir }}
           cat /${{ env.temp_dir }}/auth/kubeadmin-password
-          echo "KUBE_PW=$(<./${{ env.temp_dir }}/auth/kubeadmin-password)" >> $GITHUB_ENV
-          echo $KUBE_PW
+          # echo "KUBE_PW=$(<./${{ env.temp_dir }}/auth/kubeadmin-password)" >> $GITHUB_ENV
+          # echo $KUBE_PW
 
       # - name: Authenticate with OpenShift
       #   uses: redhat-actions/oc-login@v1
