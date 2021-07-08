@@ -16,6 +16,10 @@ on:
         description: 'AWS ami to be used for Bastion Host. Default: amazon/amzn2-ami-hvm-2.0.20210617.0-x86_64-gp2'
         required: true
         default: 'ami-0277b52859bac6f4b'
+      instance_type:
+        description: 'EC2 instance size'
+        required: true
+        default: 't2.micro'
 
 jobs:
   deploy-bastion-host:
@@ -60,15 +64,21 @@ jobs:
           echo "ami is: ${{ github.event.inputs.ami }}"
           echo "instance_type is: t2.micro"
           echo "upload ssh key from openshift instance ${{ github.event.inputs.clusterConfigName }} to create key pair"
-          aws ec2 import-key-pair --key-name "${{ github.event.inputs.clusterConfigName }}" --public-key-material fileb://./${{ env.temp_dir }}/ssh-keys/${{ github.event.inputs.clusterConfigName }}.pub | jq .
+          key_exists=$(aws ec2 import-key-pair --key-name ${{ github.event.inputs.clusterConfigName }} --public-key-material fileb://./${{ env.temp_dir }}/ssh-keys/${{ github.event.inputs.clusterConfigName }}.pub 2>&1) || true
+          if [[ $key_exists = *(InvalidKeyPair.Duplicate)* ]]; then
+            echo "${{ github.event.inputs.clusterConfigName }} key pair already exists, moving on..."
+          else
+            echo "${{ github.event.inputs.clusterConfigName }} key pair uploading..."
+          fi
+          # aws ec2 import-key-pair --key-name "${{ github.event.inputs.clusterConfigName }}" --public-key-material fileb://./${{ env.temp_dir }}/ssh-keys/${{ github.event.inputs.clusterConfigName }}.pub | jq .
           echo "deploying Bastion host in AWS"
           aws ec2 run-instances \
-            --image-id ami-0277b52859bac6f4b \
-            --instance-type t2.micro \
+            --image-id ${{ github.event.inputs.ami }} \
+            --instance-type ${{ github.event.inputs.instance_type }} \
             --subnet-id $subnet_id  \
             --security-group-ids $security_group_id \
             --associate-public-ip-address \
-            --key-name ocp-14 \
+            --key-name ${{ github.event.inputs.clusterConfigName }} \
             --tag-specifications \
               "ResourceType=instance,Tags=[{Key=Name,Value=${unique_cluster_id}-bastion},{Key=${kube_cluster_name},Value=owned},{Key=admin,Value=dmuscane@redhat.com}]" \
               "ResourceType=volume,Tags=[{Key=Name,Value=${unique_cluster_id}-bastion-disk1},{Key=admin,Value=dmuscane@redhat.com}]" | jq . > bastion.json
