@@ -51,13 +51,6 @@ jobs:
           openshift_password: ${{ secrets.OC_PASSWORD }}
           insecure_skip_tls_verify: true
 
-      - name: Create SSH key for WMCO
-        shell: bash
-        run: |
-          mkdir -p ./${{ env.lcl_install_dir }}/ssh-keys/
-          ssh-keygen -t rsa -b 4096 -m PEM -q -N "" -f "./${{ env.lcl_install_dir }}/ssh-keys/${{ env.lcl_install_dir }}-wmco"
-          aws s3 sync ./${{ env.lcl_install_dir }}/ssh-keys/ s3://${{ github.event.inputs.s3_storage }}/${{ env.lcl_install_dir }}/ssh-keys/
-
       - name: Install WMCO
         shell: bash
         run: |
@@ -74,6 +67,9 @@ jobs:
             echo "Secret cloud-private-key already exists"
           else
             echo "Creating secret cloud-private-key"
+            mkdir -p ./${{ env.lcl_install_dir }}/ssh-keys/
+            ssh-keygen -t rsa -b 4096 -m PEM -q -N "" -f "./${{ env.lcl_install_dir }}/ssh-keys/${{ env.lcl_install_dir }}-wmco"
+            aws s3 sync ./${{ env.lcl_install_dir }}/ssh-keys/ s3://${{ github.event.inputs.s3_storage }}/${{ env.lcl_install_dir }}/ssh-keys/
             oc create secret generic cloud-private-key --from-file=private-key.pem=./${{ env.lcl_install_dir }}/ssh-keys/${{ env.lcl_install_dir }}-wmco -n openshift-windows-machine-config-operator
           fi
 

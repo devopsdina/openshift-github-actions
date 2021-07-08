@@ -66,6 +66,8 @@ To populate the Actions on your fork, they must be enabled.
 
 **[deploy-openshift](#deploy-openshift)**<br>
 **[deploy-acm](#deploy-acm)**<br>
+**[deploy-windows-node](#deploy-windows-node)**<br>
+**[deploy-bastion-host](#deploy-bastion-host)**<br>
 **[configure-ssl-cert](#configure-ssl-cert)**<br>
 **[remove-kubeadmin-user](#remove-kubeadmin-user)**<br>
 **[remove-cluster](#remove-cluster)**<br>
@@ -95,6 +97,18 @@ For a cluster that supports Windows containers, update the `networkType` to `OVN
 
 ---
 
+### deploy-windows-node
+
+
+---
+
+### deploy-bastion-host
+
+The OpenShift Container Platform installer does not create any public IP addresses for any of the Amazon Elastic Compute Cloud (Amazon EC2) instances that it provisions for your OpenShift Container Platform cluster. To be able to SSH to your OpenShift Container Platform hosts, you must follow provision a Bastion (jump box) host.
+
+This workflow will provision a Bastion host in AWS with a public IP.  The workflow assumes you have used the `deploy-openshift` workflow to provision the cluster.  Copying down the S3 bucket and using the key located in the `/ssh-keys/` folder for the key pair.  This key is used to SSH into the Bastion host.
+
+---
 ### configure-ssl-cert
 
 **This job still needs to be tested**
@@ -201,7 +215,7 @@ If you are using an RHPDS Open Environment Elastic IPs are limited to 5.  You ma
 
 ##### Invalid AMI
 
-Every few months AWS updates the AMI's, you may get an error if AWS removes an older AMI.   While we do our best to ensure the default AMI's are available, you may hit this issue before we do.  Please open a pull request or issue if you run into this!
+Every few months AWS updates AMI's, you may get an error if AWS removes an older AMI.   While we do our best to ensure the default AMI's are available, you may hit this issue before we do.  Please open a pull request or issue if you run into this!
 
 ---
 
