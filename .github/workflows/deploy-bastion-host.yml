@@ -13,12 +13,12 @@ on:
         description: 'Folder name of cluster config in S3 to pull down for auth.  Example: ocp-[run_number]'
         required: true
       ami:
-        description: 'AWS ami to be used for machineSet. Default: Windows_Server-2019-English-Full-ContainersLatest-2021.06.09'
+        description: 'AWS ami to be used for Bastion Host. Default: amazon/amzn2-ami-hvm-2.0.20210617.0-x86_64-gp2'
         required: true
-        default: 'ami-0227bf3374a60ff8b'
+        default: 'ami-0277b52859bac6f4b'
 
 jobs:
-  deploy-windows-container:
+  deploy-bastion-host:
     runs-on: macos-latest
     env:
       temp_dir: "temp-${{ github.run_number }}"
