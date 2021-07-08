@@ -72,8 +72,8 @@ jobs:
           aws ec2 run-instances \
             --image-id ${{ github.event.inputs.ami }} \
             --instance-type ${{ github.event.inputs.instance_type }} \
-            --subnet-id $subnet_id  \
-            --security-group-ids $security_group_id \
+            --subnet-id "${subnet_id}" \
+            --security-group-ids "${security_group_id}" \
             --associate-public-ip-address \
             --key-name ${{ github.event.inputs.clusterConfigName }} \
             --tag-specifications \
