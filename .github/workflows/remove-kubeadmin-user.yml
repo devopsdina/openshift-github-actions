@@ -46,7 +46,7 @@ jobs:
           echo "Downloading ${{ github.event.inputs.clusterConfigName }} metadata files from S3..."
           aws s3 sync s3://${{ github.event.inputs.s3_storage }}/${{ github.event.inputs.clusterConfigName }}/auth ./ --region ${{ github.event.inputs.region }}
           ls -la ./
-          cat ./kubeadmin-password
+          echo "KUBE_PW=cat ./kubeadmin-password" >> $GITHUB_ENV
           KUBE_PW=$(<./kubeadmin-password)
           echo "pw=${KUBE_PW}" >> $GITHUB_ENV
           echo "kube admin is: $pw"
