@@ -48,15 +48,15 @@ jobs:
           ls -la ./
           KUBE_PW=`cat ./kubeadmin-password`
           echo "kube admin is: $KUBE_PW"
-          #echo "OCP_VERSION=$(./openshift-install version | head -n 1)" >> $GITHUB_ENV
+          echo "openshift_pw=${KUBE_PW}" >> $GITHUB_ENV
 
-      # - name: Authenticate with OpenShift
-      #   uses: redhat-actions/oc-login@v1
-      #   with:
-      #     openshift_server_url: ${{ env.ocpAPI }}
-      #     openshift_username: kubeadmin
-      #     openshift_password: $KUBE_PW
-      #     insecure_skip_tls_verify: true
+      - name: Authenticate with OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ env.ocpAPI }}
+          openshift_username: kubeadmin
+          openshift_password: ${{ env.openshift_pw }}
+          insecure_skip_tls_verify: true
 
       # - name: Use htpasswd as oauth, add OC_USER as cluster admin and removing kubeadmin user
       #   shell: bash
