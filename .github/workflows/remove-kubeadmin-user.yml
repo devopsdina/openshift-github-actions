@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-latest
     env:
       temp_dir: "temp-${{ github.run_number }}"
-      ocpAPI: "https://api.${{ github.event.inputs.clusterNamePrefix }}.${{ github.event.inputs.baseDomain }}:6443"
+      ocpAPI: "https://api.${{ github.event.inputs.clusterConfigName }}.${{ github.event.inputs.baseDomain }}:6443"
 
     steps:
       - name: "Checkout ${{ github.ref }}"
