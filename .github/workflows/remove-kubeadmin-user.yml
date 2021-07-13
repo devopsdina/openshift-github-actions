@@ -46,7 +46,7 @@ jobs:
           echo "Downloading ${{ github.event.inputs.clusterConfigName }} metadata files from S3..."
           aws s3 sync s3://${{ github.event.inputs.s3_storage }}/${{ github.event.inputs.clusterConfigName }}/auth ./ --region ${{ github.event.inputs.region }}
           ls -la ./
-          echo "KUBE_PW=`cat ./kubeadmin-password`" >> $GITHUB_ENV
+          echo KUBE_PW=cat ./kubeadmin-password
           echo "kube admin is: $KUBE_PW"
 
       - name: Authenticate with OpenShift
