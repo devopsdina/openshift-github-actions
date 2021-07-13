@@ -6,11 +6,11 @@ on:
       region:
         description: 'AWS Region'
         required: true
-      clusterConfigName:
-        description: 'Cluster name (i.e. ocp-[run-number])'
-        required: true
       s3_storage:
         description: 'AWS S3 storage bucket name (i.e. ocp-s3-storage)'
+        required: true
+      clusterConfigName:
+        description: 'Cluster name (i.e. ocp-[run-number])'
         required: true
       baseDomain:
         description: 'Base domain to deploy the cluster (i.e. sandbox772.opentlc.com)'
@@ -61,7 +61,7 @@ jobs:
       - name: Apply ssl cert against OpenShift
         shell: bash
         env:
-          cert_name: "apps.${{ github.event.inputs.clusterConfigName }}-${{ github.run_number }}.${{ secrets.baseDomain }}"
+          cert_name: "apps.${{ github.event.inputs.clusterConfigName }}.${{ secrets.baseDomain }}"
           fullchain_path: "${{github.workspace}}/certbot-config/live/${{ env.cert_name }}/fullchain.pem"
           privkey_path: "${{github.workspace}}/certbot-config/live/${{ env.cert_name }}/privkey.pem"
         run: |
