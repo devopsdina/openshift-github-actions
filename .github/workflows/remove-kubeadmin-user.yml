@@ -48,7 +48,7 @@ jobs:
           ls -la ./${{ env.temp_dir }}
           # cat /${{ env.temp_dir }}/kubeadmin-password
           echo "KUBE_PW=$(<./${{ env.temp_dir }}/kubeadmin-password)" >> $GITHUB_ENV
-          # echo $KUBE_PW
+          echo "kube admin is: $KUBE_PW"
 
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
