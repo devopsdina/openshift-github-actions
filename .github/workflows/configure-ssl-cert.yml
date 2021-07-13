@@ -61,7 +61,7 @@ jobs:
       - name: Apply ssl cert against OpenShift
         shell: bash
         env:
-          cert_name: "apps.${{ github.event.inputs.clusterConfigName }}.${{ secrets.baseDomain }}"
+          cert_name: "apps.${{ github.event.inputs.clusterConfigName }}.${{ github.event.inputs.baseDomain }}"
           fullchain_path: "${{github.workspace}}/certbot-config/live/${{ env.cert_name }}/fullchain.pem"
           privkey_path: "${{github.workspace}}/certbot-config/live/${{ env.cert_name }}/privkey.pem"
         run: |
