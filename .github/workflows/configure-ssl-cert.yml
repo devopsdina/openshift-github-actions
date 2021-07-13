@@ -7,7 +7,7 @@ on:
         description: 'AWS Region'
         required: true
       s3_storage:
-        description: 'AWS S3 storage bucket name (i.e. ocp-s3-storage)'
+        description: 'AWS S3 storage bucket name'
         required: true
       clusterConfigName:
         description: 'Cluster name (i.e. ocp-[run-number])'

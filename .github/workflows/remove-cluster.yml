@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       region:
-        description: 'region in AWS'
+        description: 'AWS Region'
         required: true
       s3_storage:
-        description: 'AWS S3 storage bucket name (i.e. ocp-s3-storage)'
+        description: 'AWS S3 storage bucket name'
         required: true
       clusterConfigName:
         description: 'Folder name of cluster config in S3 to pull down for auth.  Example: ocp-[run_number]'
@@ -20,6 +20,7 @@ on:
 jobs:
   remove-openshift-cluster:
     runs-on: macos-latest
+
     env:
       temp_dir: "temp-${{ github.run_number }}"
     steps:

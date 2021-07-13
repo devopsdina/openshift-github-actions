@@ -4,10 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       clusterName:
-        description: 'Short name of cluster INCLUDING unique id (i.e. ocp-15-pkccj)'
+        description: 'Short name of cluster INCLUDING unique id (i.e. ocp-18-a4j8a)'
         required: true
       region:
         description: 'region in AWS'
+        required: true
+      s3_storage:
+        description: 'AWS S3 storage bucket name'
         required: true
       ocpVersion:
         description: 'OpenShift version installed (stable, 4.7.17)'
@@ -35,7 +38,6 @@ jobs:
       - name: Download OpenShift installer and update permissions
         shell: bash
         run: |
-          mkdir -p ./${{ env.lcl_install_dir }}
           echo "Downloading OpenShift Installer..."
           wget -q https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${{ github.event.inputs.ocpVersion }}/openshift-install-mac.tar.gz
           tar -xvzf openshift-install-mac.tar.gz
