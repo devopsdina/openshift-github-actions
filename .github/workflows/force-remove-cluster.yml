@@ -7,7 +7,7 @@ on:
         description: 'Short name of cluster INCLUDING unique id (i.e. ocp-18-a4j8a)'
         required: true
       region:
-        description: 'AWS Region'
+        description: 'region in AWS'
         required: true
       s3_storage:
         description: 'AWS S3 storage bucket name'

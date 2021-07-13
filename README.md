@@ -135,66 +135,65 @@ _NOTE:_ No Windows machineSets are deployed with this workflow.
 
 ---
 
+### deploy-windows-node
+
+
+---
+
 ### deploy-bastion-host
 
-The OpenShift Container Platform installer does not create any public IP addresses for any of the Amazon Elastic Compute Cloud (Amazon EC2) instances that it provisions for your OpenShift Container Platform cluster. To be able to SSH to your OpenShift Container Platform hosts, you must provision a Bastion (jump box) host.
+- This workflow will provision a Bastion host in AWS with a public IP.  
+- The workflow assumes you have used the `deploy-openshift` workflow to provision the cluster.  Copying down the S3 bucket and using the key located in the `/ssh-keys/` folder for the key pair.  This key is used to SSH into the Bastion host.
 
-This workflow will provision a Bastion host in AWS with a public IP.  The workflow assumes you have used the `deploy-openshift` workflow to provision the cluster.  It will copy down the S3 bucket and use the key located in the `/ssh-keys/` folder for the key pair.
-
-To SSH into the Bastion host, use the key from the `/ssh-keys/` folder for the cluster.
+_NOTE: The OpenShift Container Platform installer does not create any public IP addresses for any of the Amazon Elastic Compute Cloud (Amazon EC2) instances that it provisions for your OpenShift Container Platform cluster. To be able to SSH to your OpenShift Container Platform hosts, you must follow provision a Bastion (jump box) host._
 
 ---
 ### configure-ssl-cert
 
-**This job still needs to be tested**
+**NOTE: `OC_USER` and `OC_PASSWORD` must be a valid openshift login to run this Action**
 
-Assuming the cluster is in AWS, using route 53 this job will use certbot + let's encrypt to act as a CA to sign the certificate.  
+- Assuming the cluster is in AWS, using route 53 this job will use certbot + let's encrypt to act as a CA to sign the certificate.  
 
-The certificate that is provisioned with OpenShift, while it is encrypted, it will show "un-secure" on a browser until signed by a CA due to how the certificate chain works.
+_NOTE: The certificate that is provisioned with OpenShift, while it is encrypted, it will show "un-secure" on a browser until signed by a CA due to how the certificate chain works._
 
 ---
 
 ### remove-kubeadmin-user
 
-**This job still needs to be tested**
-
 - Removes the kubeadmin user
 - Sets htpasswd as oauth
-- Uses the OC_USER and OC_PASSWORD secrets to configure a new user.
+- Uses the `OC_USER` and `OC_PASSWORD` secrets to configure a new user.
 
 ---
 
 ### remove-cluster
 
-Destroy an OpenShift cluster using the metadata files from the deployment sourced from S3.
+- Destroy an OpenShift cluster using the metadata files from the deployment sourced from S3.
 
 ---
 
 ### force-remove-cluster
 
-Destroy an OpenShift cluster without relying on any metadata from the original deployment.  It is a destroy hack!
+- Destroy an OpenShift cluster without relying on any metadata from the original deployment.  It is a destroy hack!
 
 ---
 
 ### prepull-windows-image
 
 - Pre-pull the Windows container image on the MachineSet.
+- This workflow assumes you have the metadata from the install and the ssh key used to configure the WMCO in S3.
 
-
-Until the timeout is increased to 30 minutes for pulling an image, all Windows images need to be pulled in advance of the container deployment
-
-This workflow assumes you have the metadata from the install and the ssh key used to configure the WMCO in S3.
+_NOTE: Until the timeout is increased to 30 minutes for pulling an image, all Windows images need to be pulled in advance of the container deployment_
 
 ---
 
 ### deploy-netcandystore
 
-Deploy the [NetCandy Store](http://people.redhat.com/chernand/windows-containers-quickstart/ns-intro/) a mixed environment consisting of Windows Containers and Linux Containers using helm.
+- Deploy the [NetCandy Store](http://people.redhat.com/chernand/windows-containers-quickstart/ns-intro/) a mixed environment consisting of Windows Containers and Linux Containers using helm.
 
 _NOTE: The helm install supports Windows Server 2019 Datacenter 1809_
 
 This application consists of:
-
 - Windows Container running a .NET v4 frontend, which is consuming a backend service.
 - Linux Container running a .NET Core backend service, which is using a database.
 - Linux Container running a MSSql database.
@@ -206,6 +205,27 @@ This application consists of:
 ##### Can I use the Actions with RHPDS Open Environments?
 
 - Yes, absolutely!
+
+##### How do I login to my OpenShift instance locally after using the `deploy-openshift` action?
+
+- Ensure the AWS CLI and OC CLI are installed locally.
+- Remember, metadata from the deployment is stored in AWS assuming you used the `openshift-deploy` action to provision the cluster.  
+- Pull down the data from S3 (you may need to first authenticate with your aws credentials by running `aws configure`).
+    - `aws s3 sync s3://ocp-s3-storage/ocp-<insert-run-id>/ ./ocp-<insert-run-id>`
+- Export the kube config:
+    - `export KUBECONFIG=./ocp-<insert-run-id>/auth/kubeconfig`
+    - `oc login -u <USERNAME> -p '<PASSWORD>'`
+
+Alternatively, you can also obtain a token to login by visiting: `https://oauth-openshift.apps.ocp-<insert-run-id>.<base domain>/oauth/token/request` or
+via the console (`https://console-openshift-console.apps.ocp-<insert-run-id>.<base domain>/`)
+
+Via the console, after authentication, click on the user in the upper right and hit `copy login command`, this will push you to the api login, where you will need to authenticate again.
+
+![oc login command](/assets/images/oc_login_command.png)
+
+After logging in, you can copy and paste the `oc login command`
+
+![tokens](/assets/images/tokens.png)
 
 ##### What is the difference between the `s3_storage` input and the `clusterConfigName`?
 
