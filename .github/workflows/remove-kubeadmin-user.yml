@@ -46,16 +46,15 @@ jobs:
           echo "Downloading ${{ github.event.inputs.clusterConfigName }} metadata files from S3..."
           aws s3 sync s3://${{ github.event.inputs.s3_storage }}/${{ github.event.inputs.clusterConfigName }}/auth ./ --region ${{ github.event.inputs.region }}
           ls -la ./
-          KUBE_PW=`cat ./kubeadmin-password`
-          echo "kube admin is: $KUBE_PW"
-          echo "openshift_pw=${KUBE_PW}" >> $GITHUB_ENV
+          kube_pw=`cat ./kubeadmin-password`
+          echo "kubeadmin_pw=${kube_pw}" >> $GITHUB_ENV
 
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ env.ocpAPI }}
           openshift_username: kubeadmin
-          openshift_password: ${{ env.openshift_pw }}
+          openshift_password: ${{ env.kubeadmin_pw }}
           insecure_skip_tls_verify: true
 
       # - name: Use htpasswd as oauth, add OC_USER as cluster admin and removing kubeadmin user
