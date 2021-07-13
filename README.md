@@ -104,62 +104,58 @@ For a cluster that supports Windows containers, update the `networkType` to `OVN
 
 ### deploy-bastion-host
 
-The OpenShift Container Platform installer does not create any public IP addresses for any of the Amazon Elastic Compute Cloud (Amazon EC2) instances that it provisions for your OpenShift Container Platform cluster. To be able to SSH to your OpenShift Container Platform hosts, you must follow provision a Bastion (jump box) host.
+- This workflow will provision a Bastion host in AWS with a public IP.  
+- The workflow assumes you have used the `deploy-openshift` workflow to provision the cluster.  Copying down the S3 bucket and using the key located in the `/ssh-keys/` folder for the key pair.  This key is used to SSH into the Bastion host.
 
-This workflow will provision a Bastion host in AWS with a public IP.  The workflow assumes you have used the `deploy-openshift` workflow to provision the cluster.  Copying down the S3 bucket and using the key located in the `/ssh-keys/` folder for the key pair.  This key is used to SSH into the Bastion host.
+_NOTE: The OpenShift Container Platform installer does not create any public IP addresses for any of the Amazon Elastic Compute Cloud (Amazon EC2) instances that it provisions for your OpenShift Container Platform cluster. To be able to SSH to your OpenShift Container Platform hosts, you must follow provision a Bastion (jump box) host._
 
 ---
 ### configure-ssl-cert
 
-**This job still needs to be tested**
+**NOTE: `OC_USER` and `OC_PASSWORD` must be a valid openshift login to run this Action**
 
-Assuming the cluster is in AWS, using route 53 this job will use certbot + let's encrypt to act as a CA to sign the certificate.  
+- Assuming the cluster is in AWS, using route 53 this job will use certbot + let's encrypt to act as a CA to sign the certificate.  
 
-The certificate that is provisioned with OpenShift, while it is encrypted, it will show "un-secure" on a browser until signed by a CA due to how the certificate chain works.
+_NOTE: The certificate that is provisioned with OpenShift, while it is encrypted, it will show "un-secure" on a browser until signed by a CA due to how the certificate chain works._
 
 ---
 
 ### remove-kubeadmin-user
 
-**This job still needs to be tested**
-
 - Removes the kubeadmin user
 - Sets htpasswd as oauth
-- Uses the OC_USER and OC_PASSWORD secrets to configure a new user.
+- Uses the `OC_USER` and `OC_PASSWORD` secrets to configure a new user.
 
 ---
 
 ### remove-cluster
 
-Destroy an OpenShift cluster using the metadata files from the deployment sourced from S3.
+- Destroy an OpenShift cluster using the metadata files from the deployment sourced from S3.
 
 ---
 
 ### force-remove-cluster
 
-Destroy an OpenShift cluster without relying on any metadata from the original deployment.  It is a destroy hack!
+- Destroy an OpenShift cluster without relying on any metadata from the original deployment.  It is a destroy hack!
 
 ---
 
 ### prepull-windows-image
 
 - Pre-pull the Windows container image on the MachineSet.
+- This workflow assumes you have the metadata from the install and the ssh key used to configure the WMCO in S3.
 
-
-Until the timeout is increased to 30 minutes for pulling an image, all Windows images need to be pulled in advance of the container deployment
-
-This workflow assumes you have the metadata from the install and the ssh key used to configure the WMCO in S3.
+_NOTE: Until the timeout is increased to 30 minutes for pulling an image, all Windows images need to be pulled in advance of the container deployment_
 
 ---
 
 ### deploy-netcandystore
 
-Deploy the [NetCandy Store](http://people.redhat.com/chernand/windows-containers-quickstart/ns-intro/) a mixed environment consisting of Windows Containers and Linux Containers using helm.
+- Deploy the [NetCandy Store](http://people.redhat.com/chernand/windows-containers-quickstart/ns-intro/) a mixed environment consisting of Windows Containers and Linux Containers using helm.
 
 _NOTE: The helm install supports Windows Server 2019 Datacenter 1809_
 
 This application consists of:
-
 - Windows Container running a .NET v4 frontend, which is consuming a backend service.
 - Linux Container running a .NET Core backend service, which is using a database.
 - Linux Container running a MSSql database.
