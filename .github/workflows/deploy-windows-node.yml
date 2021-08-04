@@ -54,11 +54,15 @@ jobs:
       - name: Install WMCO
         shell: bash
         run: |
-          oc apply -f ./crd/wmco-namespace.yaml
-          oc apply -f ./crd/wmco-og.yaml
-          oc apply -f ./crd/wmco-sub.yaml
-          echo "verifying the WMCO installation:"
-          oc get csv -n openshift-windows-machine-config-operator
+          if [ "$(oc get secret cloud-private-key -n openshift-windows-machine-config-operator --ignore-not-found -o name)" = "secret/cloud-private-key" ]; then
+            echo "WMCO already installed"
+          else
+            oc apply -f ./crd/wmco-namespace.yaml
+            oc apply -f ./crd/wmco-og.yaml
+            oc apply -f ./crd/wmco-sub.yaml
+            echo "verifying the WMCO installation:"
+            oc get csv -n openshift-windows-machine-config-operator
+          fi
 
       - name: Associate SSH key to WMCO
         shell: bash
