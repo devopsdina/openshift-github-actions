@@ -25,7 +25,7 @@ jobs:
   deploy-windows-node:
     runs-on: macos-latest
     env:
-      lcl_install_dir: windows-node-deployment-${{ github.run_number }}
+      lcl_install_dir: deploy-windows-node-${{ github.run_number }}
 
     steps:
       - name: "Checkout ${{ github.ref }}"
@@ -54,15 +54,11 @@ jobs:
       - name: Install WMCO
         shell: bash
         run: |
-          if [ "$(oc get secret cloud-private-key -n openshift-windows-machine-config-operator --ignore-not-found -o name)" = "secret/cloud-private-key" ]; then
-            echo "WMCO already installed"
-          else
-            oc apply -f ./crd/wmco-namespace.yaml
-            oc apply -f ./crd/wmco-og.yaml
-            oc apply -f ./crd/wmco-sub.yaml
+            oc apply -f ./crd/windows/wmco-namespace.yaml
+            oc apply -f ./crd/windows/wmco-og.yaml
+            oc apply -f ./crd/windows/wmco-sub.yaml
             echo "verifying the WMCO installation:"
             oc get csv -n openshift-windows-machine-config-operator
-          fi
 
       - name: Associate SSH key to WMCO
         shell: bash
@@ -85,9 +81,7 @@ jobs:
           export email=${{ secrets.EMAIL }}
           export windows_base_ami=${{ github.event.inputs.ami }}
           export region=${{ github.event.inputs.region }}
-          export delete_by=NEVER
-          export always_up=false
-          envsubst < ./crd/aws-machineset-win-template.yaml >> ./${{ env.lcl_install_dir }}/aws-machineset-win.yaml
+          envsubst < ./crd/windows/aws-machineset-win-template.yaml >> ./${{ env.lcl_install_dir }}/aws-machineset-win.yaml
           oc apply -f ./${{ env.lcl_install_dir }}/aws-machineset-win.yaml
           aws s3 sync ./${{ env.lcl_install_dir }}/ s3://${{ github.event.inputs.s3_storage }}/${{ env.lcl_install_dir }}/
           echo "Waiting for Windows MachineSet to become Available..."
@@ -100,7 +94,7 @@ jobs:
           export containerImage=${{ github.event.inputs.containerImage }}
           export sshkeySecretName='cloud-private-key'
           export id=${{ github.run_number }}
-          envsubst < ./crd/prepull-image-template.yaml >> ./${{ env.lcl_install_dir }}/prepull-image.yaml
+          envsubst < ./crd/windows/prepull-image-template.yaml >> ./${{ env.lcl_install_dir }}/prepull-image.yaml
           oc project openshift-windows-machine-config-operator
           oc apply -f ./${{ env.lcl_install_dir }}/prepull-image.yaml
           echo "Waiting for Windows image pull to complete..."
@@ -113,7 +107,7 @@ jobs:
           export projectName='windows-workloads'
           export containerImage=${{ github.event.inputs.containerImage }}
           export id=${{ github.run_number }}
-          envsubst < ./crd/windows-container-template.yaml >> ./${{ env.lcl_install_dir }}/windows-container.yaml
+          envsubst < ./crd/windows/windows-container-template.yaml >> ./${{ env.lcl_install_dir }}/windows-container.yaml
 
           if [ "$(oc get project $projectName -o name)" = "project.project.openshift.io/$projectName" ]; then
             echo "Project $projectName already exists"
